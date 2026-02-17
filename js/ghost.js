@@ -11,7 +11,7 @@ var gGhostsInterval
 
 function createGhosts(count) {
     const initialCellContent = gBoard[gInitialPos.i][gInitialPos.j]
-    
+
     // Create mode: ghosts
     for (var i = 0; i < count; i++) {
         createGhost(gBoard, initialCellContent)
@@ -19,7 +19,7 @@ function createGhosts(count) {
 
     // rendering ghosts
     renderGhosts()
-    
+
     // Moving ghosts
     gIntervals.ghostsInterval = setInterval(moveGhosts, 500)
 }
@@ -32,7 +32,6 @@ function createGhost(board, initialCell) {
         currCellContent: initialCell
     }
     findAltGhostInitPos(ghost, board) // if the initial position cell is not an allowed cell, then they are created with alternative position 
-
 
     // Update model: Add the ghost to the live ghosts array
     gLiveGhosts.push(ghost)
@@ -59,7 +58,7 @@ function handleGhostMovement(ghost) {
     var nextCell = gBoard[nextPos.i][nextPos.j]
 
     // for simplicity, ghosts allow to move only to allowed cells - cells with empty or regular food
-    while (!isAllowedCell(nextCell)) {
+    while (!isAllowedCell(nextCell, false)) {
         diff = getMoveDiff()
         nextPos = {
             i: ghost.pos.i + diff.i,
@@ -178,7 +177,7 @@ function ghostEaten(ghost) {
 }
 
 function findAltGhostInitPos(ghost, board) {
-    while (!isAllowedCell(ghost.currCellContent)){
+    while (!isAllowedCell(ghost.currCellContent,true)) {
         ghost.pos = getRandomEmptyPos()
         ghost.currCellContent = board[ghost.pos.i][ghost.pos.j]
     }
@@ -197,8 +196,9 @@ function getNextCell() {
     const nextCell = gBoard[nextPos.i][nextPos.j]
 }
 
-function isAllowedCell(cell) {
-    return (cell === FOOD || cell === EMPTY)
+function isAllowedCell(cell, isInitial) {
+    const isAllowedCell = isInitial ? (cell === FOOD || cell === EMPTY) : (cell === FOOD || cell === EMPTY || PACMAN)
+    return isAllowedCell
 }
 
 function renderGhosts() {
